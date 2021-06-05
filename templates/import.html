@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <title> Zuerst </title>
-
 </head>
 
 <body>
@@ -61,13 +60,6 @@
           <form class="control__form" method="post" action="{{ url_for('application.set_dropout') }}" enctype="multipart/form-data">
             <ul class="dropout__bullets">
               <li class="dropout__list"> unique &le; 1 pcs </li>
-              {% if unique and null %}
-                <li class="dropout__list"> unique (Cat) &ge; <label> <input class="dropout__textbox input_limit" type="number" min="0" name="unique" value="{{ unique }}"> pcs </label> </li>
-                <li class="dropout__list"> missing value &ge; <label> <input class="dropout__textbox input_limit" type="number"  min="0" max="100" name="null" value="{{ null }}">% </label> </li>
-              {% else %}
-                <li class="dropout__list"> unique (Cat) &ge; <label> <input class="dropout__textbox input_limit" type="number" min="0" name="unique" value="20"> pcs </label> </li>
-                <li class="dropout__list"> missing value &ge; <label> <input class="dropout__textbox input_limit" type="number"  min="0" max="100" name="null" value="80">% </label> </li>
-              {% endif %}
             </ul>
             <p> <input type="submit" value="Set" style="font-size: 9pt;"> </p>
           </form>
@@ -80,37 +72,10 @@
       <div class="review__inner">
         <div class="review__menu">
           <a class="review__link" href="review_dataset.html">
-            {% if dataset %}
-              <div class="review__tab review__tab--active"> Dataset </div>
-            {% else %}
-              <div class="review__tab"> Dataset </div>
-            {% endif %}
-          </a>
-          <a class="review__link" href="review_columns.html">
-            {% if columns and not dataset %}
-              <div class="review__tab review__tab--active"> Columns </div>
-            {% else %}
-              <div class="review__tab"> Columns </div>
-            {% endif %}
           </a>
         </div>
-        {% if dataset %}
-          <div class="tab_header">
-            <div class="tab_header__label"> Top {{ head }} rows: </div>
-            <div class="tab_header__box" style="background-color: rgba(238,238,238,0.27); width: 60px;"> Label </div>
-            <div class="tab_header__box" style="background-color: rgba(242,227,252,0.46); width: 60px;"> Group </div>
-            <div class="tab_header__box" style="background-color: rgba(208,252,244,0.48); width: 80px;"> TrainTest </div>
-            <div class="tab_header__box" style="background-color: rgba(215,255,204,0.47); width: 40px;"> Y </div>
-            <div class="tab_header__box" style="background-color: rgba(251,253,203,0.40); width: 40px;"> X </div>
-          </div>
-        {% endif %}
 
         <div class="review__table">
-          {% if dataset %}
-            <div id="dataset_table"></div>
-          {% elif columns %}
-            <div id="column_table"></div>
-          {% endif %}
         </div>
       </div>
     </div>
