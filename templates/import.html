@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/static/img/favicon.ico">
+  <link rel="stylesheet" href="/static/css/menu.css">
+  <link rel="stylesheet" href="/static/css/dataset.css">
+  <script src="/static/js/jquery-1.x-git.min.js" defer></script>
+  <script src="/static/js/jexcel.js" defer></script>
+  <link rel="stylesheet" href="/static/css/jexcel.css">
+  <script src="/static/js/jsuites.js"></script>
+  <link rel="stylesheet" href="/static/css/jsuites.css">
+  <link rel="stylesheet" href="/static/css/toolbar.css"/>
+
+{# CDN #}
+{#  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>#}
+{#  <script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js" defer></script>#}
+{#  <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css"/>#}
+{#  <script src="https://jsuites.net/v4/jsuites.js"></script>#}
+{#  <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css"/>#}
+
+{# IE対応のためWeb上からアイコン読込み #}
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons"/>
+{#  #}
+
+  <script src="/static/js/sweetalert2.min.js" defer></script>
+  <script src="/static/js/myjs.js" defer></script>
+  <div id="ERROR" title="{{error_txt}}"> </div>
+  <div id="WARNING" title="{{warning_txt}}"> </div>
+  <title> Zuerst </title>
+
+</head>
+
+<body>
+  <div class="contents">
+
+    <nav class="contents__menu menu">
+      <div class="menu__header"> Zuerst </div>
+
+      <a class="menu__link" href="import.html">
+        <ul class="menu__list  menu__list--active">
+          <li class="menu__items"> <div class="menu__ribbon menu__ribbon--active"> </div> </li>
+          <li class="menu__items"> <div class="menu__icon"> <img src="/static/img/Icon_Import.png" width="14" height="auto" alt=""> </div> </li>
+          <li class="menu__items"> <div class="menu__text"> Import </div> </li>
+        </ul>
+      </a>
+
+      <a href="analyze.html">
+        <ul class="menu__list">
+          <li class="menu__items"> <div class="menu__ribbon"> </div> </li>
+          <li class="menu__items"> <div class="menu__icon"> <img src="/static/img/Icon_Analyze.png" width="14" height="auto" alt=""> </div> </li>
+          <li class="menu__items"> <div class="menu__text"> Analyze </div> </li>
+        </ul>
+      </a>
+
+      <a href="export.html">
+        <ul class="menu__list">
+          <li class="menu__items"> <div class="menu__ribbon"> </div> </li>
+          <li class="menu__items"> <div class="menu__icon"> <img src="/static/img/Icon_Export.png" width="14" height="auto" alt=""> </div> </li>
+          <li class="menu__items"> <div class="menu__text"> Export </div> </li>
+        </ul>
+      </a>
+    </nav>
+
+    <div class="contents__control control">
+
+      <div class="control__import">
+        <div class="control__header"> My dataset </div>
+        <div class="control__inner_upload upload">
+          <form class="control__form" method="post" action="{{ url_for('application.upload_dataset') }}" enctype="multipart/form-data">
+            <div class="upload__button">
+              <div class="upload__list"> <button type="button" id="button_dataset"> Dataset </button> </div>
+              <div class="upload__list"> <input id="file_dataset" type="file" name="dataset" accept=".zip,.csv" /> </div>
+              <div class="upload__list"> <label for="filename_dataset"></label><input id="filename_dataset" readonly type="text" value="" /> </div>
+            </div>
+            <div class="upload__button">
+              <input type="submit" id="button_upload" value="Upload" />
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="control__optional"> optional </div>
+      <div class="control__dropout">
+        <div class="control__header"> Dropout criteria </div>
+        <div class="control__inner_dropout dropout">
+          <form class="control__form" method="post" action="{{ url_for('application.set_dropout') }}" enctype="multipart/form-data">
+            <ul class="dropout__bullets">
+              <li class="dropout__list"> unique &le; 1 pcs </li>
+              {% if unique and null %}
+                <li class="dropout__list"> unique (Cat) &ge; <label> <input class="dropout__textbox input_limit" type="number" min="0" name="unique" value="{{ unique }}"> pcs </label> </li>
+                <li class="dropout__list"> missing value &ge; <label> <input class="dropout__textbox input_limit" type="number"  min="0" max="100" name="null" value="{{ null }}">% </label> </li>
+              {% else %}
+                <li class="dropout__list"> unique (Cat) &ge; <label> <input class="dropout__textbox input_limit" type="number" min="0" name="unique" value="20"> pcs </label> </li>
+                <li class="dropout__list"> missing value &ge; <label> <input class="dropout__textbox input_limit" type="number"  min="0" max="100" name="null" value="80">% </label> </li>
+              {% endif %}
+            </ul>
+            <p> <input type="submit" value="Set" style="font-size: 9pt;"> </p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="contents__review review">
+      <div class="review__inner">
+        <div class="review__menu">
+          <a class="review__link" href="review_dataset.html">
+            {% if dataset %}
+              <div class="review__tab review__tab--active"> Dataset </div>
+            {% else %}
+              <div class="review__tab"> Dataset </div>
+            {% endif %}
+          </a>
+          <a class="review__link" href="review_columns.html">
+            {% if columns and not dataset %}
+              <div class="review__tab review__tab--active"> Columns </div>
+            {% else %}
+              <div class="review__tab"> Columns </div>
+            {% endif %}
+          </a>
+        </div>
+        {% if dataset %}
+          <div class="tab_header">
+            <div class="tab_header__label"> Top {{ head }} rows: </div>
+            <div class="tab_header__box" style="background-color: rgba(238,238,238,0.27); width: 60px;"> Label </div>
+            <div class="tab_header__box" style="background-color: rgba(242,227,252,0.46); width: 60px;"> Group </div>
+            <div class="tab_header__box" style="background-color: rgba(208,252,244,0.48); width: 80px;"> TrainTest </div>
+            <div class="tab_header__box" style="background-color: rgba(215,255,204,0.47); width: 40px;"> Y </div>
+            <div class="tab_header__box" style="background-color: rgba(251,253,203,0.40); width: 40px;"> X </div>
+          </div>
+        {% endif %}
+
+        <div class="review__table">
+          {% if dataset %}
+            <div id="dataset_table"></div>
+          {% elif columns %}
+            <div id="column_table"></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
