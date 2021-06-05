@@ -5,7 +5,7 @@ app = Flask(__name__)
 @app.route("/")
 def main_page():
     
-    return render_template("page.html")
+    return render_template("import.html")
 
 #     if request.method == 'GET':
 #         text = "ここに結果が出力されます"
